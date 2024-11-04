@@ -12,7 +12,7 @@ class HomeController extends Controller
     {
         return view('home', [
             'title' => 'Home',
-            'post' => Post::all(),
+            'post' => Post::latest()->get(),
             'categories' => Category::all(),
         ]);
     }
