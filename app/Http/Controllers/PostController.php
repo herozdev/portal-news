@@ -10,7 +10,7 @@ class PostController extends Controller
 {
     public function show(Post $post) {
         return view('post', [
-            'title' => "Detail Post",
+            'title' => $post->title,
             'post' => $post,
             'categories' => Category::all(),
         ]);

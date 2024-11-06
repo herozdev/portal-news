@@ -11,7 +11,7 @@ class CategoryController extends Controller
     {
         return view('category', [
             'title' => $category->name,
-            'post' => $category->post,
+            'post' => $category->post->load('category', 'user'),
             'category' => $category->name,
             'categories' => Category::all(),
         ]);
