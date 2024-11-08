@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="{{ asset('home/vendors/linericon/style.css') }}">
     <link rel="stylesheet" href="{{ asset('home/vendors/owl-carousel/owl.theme.default.min.css') }}">
     <link rel="stylesheet" href="{{ asset('home/vendors/owl-carousel/owl.carousel.min.css') }}">
-
     <link rel="stylesheet" href="{{ asset('home/css/style.css') }}">
 </head>
 
@@ -33,9 +32,6 @@
                             <li class="nav-item {{ $title === 'Home' ? 'active' : '' }}">
                                 <a class="nav-link" href="/">Home</a>
                             </li>
-                            {{-- <li class="nav-item">
-                                <a class="nav-link" href="/archive" {{ $title === 'Archive' ? 'active' : '' }}>Archive</a>
-                            </li> --}}
                             <li class="nav-item submenu dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
                                     aria-haspopup="true" aria-expanded="false">News</a>
@@ -51,7 +47,7 @@
                             <li class="nav-item {{ $title === 'Contact' ? 'active' : '' }}">
                                 <a class="nav-link" href="/contact"
                                     {{ $title === 'Contact' ? 'active' : '' }}>Contact</a>
-                                </li>
+                            </li>
                             <li class="nav-item">
                                 <a href="/admin" class="nav-link">Sign In</a>
                             </li>
@@ -75,7 +71,7 @@
         <!--================Hero Banner end =================-->
 
         <!--================ Blog slider start =================-->
-        @if (!Route::is('post.show') && !Route::is('category.show'))
+        @if (!Route::is('post.show') && !Route::is('category.show') && !Route::is('archive'))
             @include('partials.slider')
         @endif
         <!--================ Blog slider end =================-->

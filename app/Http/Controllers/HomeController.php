@@ -12,7 +12,8 @@ class HomeController extends Controller
     {
         return view('home', [
             'title' => 'Home',
-            'post' => Post::with(['user', 'category'])->latest()->get(),
+            'post' => Post::latest()->paginate(8)->withQueryString(),
+            'slide' => Post::latest()->take(4)->get(),
             'categories' => Category::all(),
         ]);
     }
@@ -20,7 +21,9 @@ class HomeController extends Controller
     public function archive()
     {
         return view('archive', [
-            'title' => 'Archive',
+            'title' => 'Archive -> ' . request('search') ,
+            'categories' => Category::all(),
+            'post' => Post::latest()->filter(request(['search']))->get(),
         ]);
     }
 }

@@ -3,7 +3,7 @@
 <script src="{{ asset('home/vendors/owl-carousel/owl.carousel.min.js') }}"></script>
 <script src="{{ asset('home/js/jquery.ajaxchimp.min.js') }}"></script>
 <script src="{{ asset('home/js/mail-script.js') }}"></script>
-{{-- <script src="{{ asset('home/js/main.js') }}"></script> --}}
+<script src="{{ asset('home/js/main.js') }}"></script>
 <script>
     $(document).ready(function() {
         // Siapkan URL gambar dalam variabel JavaScript (Blade akan memproses asset())

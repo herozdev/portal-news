@@ -16,7 +16,7 @@
                     <a href="/post/{{ $item->slug }}">
                         <h3>{{ $item->title }}</h3>
                     </a>
-                    <p class="tag-list-inline">Category: {{ $category }}</p>
+                    <p class="tag-list-inline">Category: <a href="/category/{{ $item->category->slug }}">{{ $item->category->name }}</a></p>
                     <p>{!! $item->excerpt !!}</p>
                     <a class="button" href="/post/{{ $item->slug }}">Read More <i class="ti-arrow-right"></i></a>
                 </div>
