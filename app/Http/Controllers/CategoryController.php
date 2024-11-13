@@ -9,9 +9,11 @@ class CategoryController extends Controller
 {
     public function show(Category $category)
     {
+        $posts = $category->post()->with('category','user')->paginate(4)->withQueryString();
         return view('category', [
             'title' => $category->name,
-            'post' => $category->post->load('category', 'user'),
+            'post' => $posts,
+            // 'post' => $category->post->load('category', 'user')->paginate(8)->withQueryString(),
             'category' => $category->name,
             'categories' => Category::all(),
         ]);

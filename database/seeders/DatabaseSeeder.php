@@ -19,23 +19,23 @@ class DatabaseSeeder extends Seeder
 
         // Manual Seeding
 
-        Category::create([
-            'name' => "Web Programming",
-            'slug' => 'web-programming'
-        ]);
+        // Category::create([
+        //     'name' => "Web Programming",
+        //     'slug' => 'web-programming'
+        // ]);
 
-        Category::create([
-            'name' => "Tech News",
-            'slug' => 'tech-news'
-        ]);
+        // Category::create([
+        //     'name' => "Tech News",
+        //     'slug' => 'tech-news'
+        // ]);
 
-        Category::create([
-            'name' => "Sport News",
-            'slug' => 'sport-news'
-        ]);
+        // Category::create([
+        //     'name' => "Sport News",
+        //     'slug' => 'sport-news'
+        // ]);
 
-        User::factory(5)->create();
+        // User::factory(5)->create();
         // Category::factory(4)->create();
-        Post::factory(8)->create();
+        Post::factory(15)->create();
     }
 }

@@ -49,7 +49,7 @@
                                     {{ $title === 'Contact' ? 'active' : '' }}>Contact</a>
                             </li>
                             <li class="nav-item">
-                                <a href="/admin" class="nav-link">Sign In</a>
+                                <a href="/auth" class="nav-link">Sign In</a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right navbar-social">

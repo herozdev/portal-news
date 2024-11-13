@@ -23,7 +23,7 @@ class HomeController extends Controller
         return view('archive', [
             'title' => 'Archive -> ' . request('search') ,
             'categories' => Category::all(),
-            'post' => Post::latest()->filter(request(['search']))->get(),
+            'post' => Post::latest()->filter(request(['search']))->paginate(8)->withQueryString(),
         ]);
     }
 }
