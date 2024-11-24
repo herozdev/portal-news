@@ -33,16 +33,28 @@
                                                 aria-label="Close"></button>
                                         </div>
                                     @endif
+                                    
+                                    @if (session()->has('loginError'))
+                                        <div class="alert border-danger alert-dismissible fade show" role="alert">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            {{ session('loginError') }}
+                                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                aria-label="Close"></button>
+                                        </div>
+                                    @endif
 
-                                    <form class="row g-3 needs-validation" novalidate>
-
+                                    <form class="row g-3" action="/auth" method="POST">
+                                        @csrf
                                         <div class="col-12">
                                             <label for="yourUsername" class="form-label">Username</label>
                                             <div class="input-group has-validation">
                                                 <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                                <input type="text" name="username" class="form-control" id="yourUsername"
-                                                    required>
-                                                <div class="invalid-feedback">Please enter your username.</div>
+                                                <input type="text" name="username"
+                                                    class="form-control @error('username') is-invalid @enderror"
+                                                    id="yourUsername" required>
+                                                @error('username')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                         </div>
 

@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CategoryController;
-use App\Models\Post;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,13 +17,21 @@ use App\Models\Post;
 |
 */
 
+Route::middleware(['guest'])->group(function () {
+    Route::get('/auth', [AdminController::class, 'auth'])->name('auth');
+    Route::get('/register', [AdminController::class, 'registration'])->name('registration');
+    Route::post('/store', [AdminController::class, 'store'])->name('store');
+    Route::post('/auth', [AdminController::class, 'authenticate']);
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+    Route::post('/logout', [AdminController::class, 'logout']);
+});
+
 
 Route::get('/', [HomeController::class, 'index'])->name('/');
 Route::get('/archive', [HomeController::class, 'archive'])->name('archive');
 
 Route::get('/post/{post:slug}', [PostController::class, 'show'])->name('post.show');
 Route::get('/category/{category:slug}', [CategoryController::class, 'show'])->name('category.show');
-
-Route::get('/auth', [AdminController::class, 'auth'])->name('auth');
-Route::get('/register', [AdminController::class, 'registration'])->name('registration');
-Route::post('/store', [AdminController::class, 'store'])->name('store');

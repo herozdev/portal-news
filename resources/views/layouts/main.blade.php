@@ -48,9 +48,28 @@
                                 <a class="nav-link" href="/contact"
                                     {{ $title === 'Contact' ? 'active' : '' }}>Contact</a>
                             </li>
+
+                            @auth
+                            <li class="nav-item submenu dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+                                    aria-haspopup="true" aria-expanded="false">Welcome, {{ auth()->user()->name }}</a>
+                                <ul class="dropdown-menu">
+                                    <li class="nav-item"><a href="/dashboard" class="nav-link">My Dashboard</a></li>
+                                    <li class="nav-item">
+                                        <form action="/logout" method="post">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item nav-link">Sign Out</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            @else
                             <li class="nav-item">
                                 <a href="/auth" class="nav-link">Sign In</a>
                             </li>
+                            @endauth
+
                         </ul>
                         <ul class="nav navbar-nav navbar-right navbar-social">
                             <li><a href="https://github.com/herozdev" target="_blank"><i class="ti-github"></i></a></li>

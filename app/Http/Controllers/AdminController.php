@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -14,6 +15,16 @@ class AdminController extends Controller
         return view('login', [
             'title' => "Login User",
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 
     public function registration()
@@ -40,5 +51,28 @@ class AdminController extends Controller
 
         return redirect('/auth')->with('success', 'Registration Successfull!!');
 
+    }
+
+    public function authenticate(Request $request)
+    {
+        $credentials = $request->validate([
+            'username' => ['required'],
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect()->intended('/dashboard');
+        }
+
+        return back()->with('loginError', 'Username and Password not found!!');
+    }
+
+    public function dashboard()
+    {
+        return view('admin.dashboard', [
+            'title' => "Dashboard"
+        ]);
     }
 }
