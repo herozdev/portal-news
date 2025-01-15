@@ -1231,3 +1231,12 @@ h6 {
   font-size: 13px;
   color: #012970;
 }
+
+.btn-right {
+  float: inline-end;
+}
+
+#quill-editor-full {
+  transition: height 0.2s ease;
+  height: 150px;
+}

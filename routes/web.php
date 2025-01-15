@@ -25,9 +25,30 @@ Route::middleware(['guest'])->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard')->middleware('auth');
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::post('/logout', [AdminController::class, 'logout']);
+
+    Route::prefix('/dashboard/posts')->group(function () {
+        Route::get('/', [AdminController::class, 'indexPosts']);
+        Route::get('/show/{post:slug}', [AdminController::class, 'showPosts']);
+        Route::get('/create', [AdminController::class, 'createPosts']);
+        Route::get('/checkSlug', [AdminController::class, 'checkSlug']);
+        Route::post('/storePost', [AdminController::class, 'storePost']);
+        Route::post('/uploadImage', [AdminController::class, 'uploadImage']);
+        Route::delete('/deletePost/{post:slug}', [AdminController::class, 'deletePost']);
+        Route::get('/editPost/{post:slug}', [AdminController::class, 'editPost']);
+        Route::get('/updatePost/{post:slug}', [AdminController::class, 'updatePost']);
+    });
+
+    Route::prefix('/dashboard/categories')->group(function () {
+        Route::get('/', [AdminController::class, 'indexCategories']);
+        Route::get('/create', [AdminController::class, 'createCategories']);
+        Route::get('/checkSlugCategory', [AdminController::class, 'checkSlugCategory']);
+        Route::post('/storeCategory', [AdminController::class, 'storeCategory']);
+    });
 });
+
+Route::middleware(['auth:api'])->group(function () {});
 
 
 Route::get('/', [HomeController::class, 'index'])->name('/');
