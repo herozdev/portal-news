@@ -5,7 +5,7 @@
         @foreach ($post as $item)
             <div class="single-recent-blog-post">
                 <div class="thumb">
-                    <img class="img-fluid" src="{{ asset('home/img/blog/blog1.png') }}" alt="">
+                    <img class="img-fluid" src="{{ asset($item->image) }}" alt="">
                     <ul class="thumb-info">
                         <li><a href="#"><i class="ti-user"></i>{{ $item->user->name }}</a></li>
                         <li><a href="#"><i class="ti-notepad"></i>{{ $item->created_at->diffForHumans() }}</a></li>

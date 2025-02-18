@@ -2,14 +2,14 @@
 
 @php
     $pluginStyles = [
-        asset('admin/vendor/quill/quill.snow.css'),
+        asset('admin/vendor/summernote/summernote-lite.min.css'),
     ];
 
     $afterStyles = [];
 
     $pluginScripts = [
         asset('admin/vendor/jquery/jquery.min.js'),
-        asset('admin/vendor/quill/quill.min.js'),
+        asset('admin/vendor/summernote/summernote-lite.min.js'),
     ];
 
     $afterScripts = [
@@ -25,8 +25,9 @@
                     <div class="card-body">
                         <h6 class="card-title">{{ $title }}</h6>
                         <form action="/dashboard/posts/updatePost/{{ $post->slug }}" method="post" class="row g-3">
-                            @method('put')
                             @csrf
+                            @method('put')
+
                             <div class="col-lg-8">
                                 <label for="title" class="form-label">Your Title</label>
                                 <input type="text" name="title" id="title"
@@ -65,13 +66,26 @@
                                     </div>
                                 @enderror
                             </div>
+                            <div class="col-lg-8">
+                                <label for="image" class="form-label">Main Image</label>
+                                @if ($post->image)
+                                    <img src="{{ asset($post->image) }}" style="max-width: 150px">
+                                @endif
+                                <input type="file" name="image" id="image"
+                                    class="form-control @error('image') is-invalid @enderror">
+                                @error('image')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
                             <div class="col-lg-8" id="scrolling-container">
                                 @error('body')
                                     <p class="text-danger">{{ $message }}</p>
                                 @enderror
                                 <label for="body" class="form-label">Article</label>
-                                <input type="hidden" class="form-control" name="body" value="{!! old('body', $post->body) !!}">
-                                <div id="quill-editor-full"></div>
+                                <textarea name="body" id="body">{!! old('body', $post->body) !!}</textarea>
+                                <input type="hidden" name="content" id="content">
                             </div>
                             <div class="col-lg-8">
                                 <div class="d-flex">

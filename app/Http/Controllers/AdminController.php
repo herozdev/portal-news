@@ -132,38 +132,90 @@ class AdminController extends Controller
 
     public function uploadImage(Request $request)
     {
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/img-content', $imageName);
-            // return asset('storage/img-content/' . $imageName);
+        $request->validate([
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-            return response()->json(['url' => 'storage/img-content/' . $imageName]);
+        $image = $request->file('file');
+        $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
+        $destinationPath = public_path('uploads');
+
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
         }
+
+        $this->resizeImage($image->getRealPath(), $destinationPath . '/' . $imageName, 800);
+
+        return response()->json(url('uploads/' . $imageName));
     }
+
 
     public function storePost(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'title' => ['required', 'max:255'],
             'slug' => ['required', 'unique:posts'],
             'category_id' => ['required'],
-            'body' => ['required', 'min:20', 'max:100000'],
+            'body' => ['required', 'min:20', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpg,png,jpeg,gif', 'max:2048'],
         ]);
+
+        $data = [
+            'title' => $request->title,
+            'slug' => $request->slug,
+            'category_id' => $request->category_id,
+            'body' => $request->body,
+            'user_id' => auth()->user()->id,
+        ];
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->storeAs('public/img-content', $imageName);
-            $validated['image'] = $imageName;
+            $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
+            $destinationPath = public_path('uploads');
+
+            // Buat folder jika belum ada
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            // Resize gambar
+            $resizedImagePath = $destinationPath . '/' . $imageName;
+            $this->resizeImage($image->getRealPath(), $resizedImagePath, 800);
+
+            $data['image'] = 'uploads/' . $imageName;
         }
 
-        $validated['user_id'] = auth()->user()->id;
-        $validated['excerpt'] = Str::limit(strip_tags($request->body), 100);
+        $data['excerpt'] = Str::limit(strip_tags($request->body), 100);
 
-        Post::create($validated);
+        Post::create($data);
 
         return redirect('/dashboard/posts')->with('success', 'New post published !!');
+    }
+
+    private function resizeImage($sourcePath, $destinationPath, $newWidth)
+    {
+        list($width, $height) = getimagesize($sourcePath);
+        $newHeight = intval($height * $newWidth / $width);
+
+        $imageResized = imagecreatetruecolor($newWidth, $newHeight);
+        $imageOriginal = imagecreatefromstring(file_get_contents($sourcePath));
+
+        imagecopyresampled(
+            $imageResized,
+            $imageOriginal,
+            0,
+            0,
+            0,
+            0,
+            $newWidth,
+            $newHeight,
+            $width,
+            $height
+        );
+
+        imagejpeg($imageResized, $destinationPath, 90);
+        imagedestroy($imageResized);
+        imagedestroy($imageOriginal);
     }
 
     public function storeCategory(Request $request)
@@ -196,23 +248,103 @@ class AdminController extends Controller
 
     public function updatePost(Request $request, Post $post)
     {
-        $rules = [
-            'title' => ['required', 'max:255'],
+        $request->validate([
+            'title' => ['required', 'max:255', 'string'],
             'category_id' => ['required'],
-            'body' => ['required'],
+            'body' => ['required', 'string'],
+            'image' => ['nullable', 'image', 'mimes:jpg,png,jpeg,gif', 'max:2048'],
+        ]);
+
+        $data = [
+            'title' => $request->title,
+            'category_id' => $request->category_id,
+            'body' => $request->body,
         ];
 
-        if ($request->slug != $post->slug) {
-            $rules['slug'] = ['required', 'unique:posts'];
+        if ($request->hasFile('image')) {
+            if ($post->image && file_exists(public_path($post->image))) {
+                unlink(public_path($post->image));
+            }
+
+            $image = $request->file('image');
+            $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
+            $destinationPath = public_path('uploads');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            $resizedImagePath = $destinationPath . '/' . $imageName;
+            $this->resizeImage($image->getRealPath(), $resizedImagePath, 800);
+            $data['image'] = 'uploads/' . $imageName;
         }
 
-        $validatedData = $request->validate($rules);
+        // Proses gambar di Summernote
+        $this->handleSummernoteImages($post->body, $request->body);
 
-        $validatedData['user_id'] = auth()->user()->id;
-        $validatedData['excerpt'] = Str::limit(strip_tags($request->body), 100);
+        if ($request->slug != $post->slug) {
+            $data['slug'] = ['required', 'unique:posts'];
+        }
 
-        Post::where('id', $post->id)->update($validatedData);
+
+        $data['user_id'] = auth()->user()->id;
+        $data['excerpt'] = Str::limit(strip_tags($request->body), 100);
+
+        Post::where('id', $post->id)->update($data);
 
         return redirect('/dashboard/posts')->with('success', 'Your post has been updated !!');
+    }
+
+    private function handleSummernoteImages($oldContent, $newContent)
+    {
+        $oldImages = $this->extractImagePaths($oldContent);
+        $newImages = $this->extractImagePaths($newContent);
+
+        // Gambar yang harus dihapus (tidak ada di konten baru)
+        $imagesToDelete = array_diff($oldImages, $newImages);
+        foreach ($imagesToDelete as $image) {
+            if (file_exists(public_path($image))) {
+                unlink(public_path($image));
+            }
+        }
+    }
+
+    private function extractImagePaths($content)
+    {
+        $paths = [];
+
+        // Cek apakah konten kosong
+        if (empty(trim($content))) {
+            return $paths;
+        }
+
+        // Aktifkan error suppression untuk DOMDocument
+        libxml_use_internal_errors(true);
+
+        $dom = new \DOMDocument();
+
+        // Pastikan encoding benar
+        $content = mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8');
+
+        // Load HTML ke DOMDocument
+        $dom->loadHTML($content, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+
+        libxml_clear_errors();
+
+        // Ambil semua tag <img>
+        $images = $dom->getElementsByTagName('img');
+
+        foreach ($images as $img) {
+            if ($img->hasAttribute('src')) {
+                $src = $img->getAttribute('src');
+
+                // Pastikan hanya gambar lokal yang diproses
+                if (strpos($src, url('/')) !== false) {
+                    $src = str_replace(url('/'), '', $src);
+                }
+
+                $paths[] = $src;
+            }
+        }
+
+        return $paths;
     }
 }

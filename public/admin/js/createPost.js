@@ -46,38 +46,37 @@
                 ['table', ['table']],
                 ['insert', ['link', 'picture']]
             ]
+        },
+        callbacks: {
+            onImageUpload: function (files) {
+                uploadImage(files[0]);
+            },
+            onMediaDelete: function (target) {
+                deleteImage(target[0].src);
+            }
         }
     });
 
-
-    // // Quill
-    // const toolbarOptions = [
-    //     [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    //     ['bold', 'italic', 'underline', 'strike'],
-    //     ['image', 'code-block', 'blockquote'],
-    //     [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-    //     [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-    //     [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
-    //     [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-    //     [{ 'direction': 'rtl' }],                         // text direction
-    //     [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-    //     [{ 'font': [] }],
-    //     [{ 'align': [] }],
-    // ];
-
-    // var quill = new Quill('#quill-editor-full', {
-    //   theme: 'snow',
-    //   modules: {
-    //     toolbar: toolbarOptions,
-    //     imageUpload: {
-    //       url: null,
-    //       method: 'base64',
-    //     },
-    //   },
-    // });
-
-    // quill.on('text-change', function (delta, oldDelta, source) {
-    //     document.querySelector("input[name='body']").value = quill.root.innerHTML;
-    // });
+    function uploadImage(file) {
+        let data = new FormData();
+        data.append('file', file);
+        $.ajax({
+            url: '/dashboard/posts/uploadImage',
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: data,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Tambahkan CSRF token
+            },
+            type: "post",
+            success: function (url) {
+                $('#body').summernote("insertImage", url);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
 
 })();

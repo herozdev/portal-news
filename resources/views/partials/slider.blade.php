@@ -4,7 +4,7 @@
             @foreach ($slide as $item)
             <div class="card blog__slide text-center">
                 <div class="blog__slide__img">
-                    <img class="card-img rounded-0" src="{{ asset('home/img/blog/blog-slider/blog-slide1.png') }}" alt="">
+                    <img class="card-img rounded-0" src="{{ asset($item->image) }}" alt="" width="100" height="250">
                 </div>
                 <div class="blog__slide__content">
                     <a class="blog__slide__label" href="#">{{ $item->category->name }}</a>

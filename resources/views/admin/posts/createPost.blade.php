@@ -59,7 +59,7 @@
                                 @enderror
                             </div>
                             <div class="col-lg-8">
-                                <label for="image" class="form-label">Image</label>
+                                <label for="image" class="form-label">Main Image</label>
                                 <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror">
                                 @error('image')
                                     <div class="invalid-feedback">
@@ -73,8 +73,6 @@
                                 @enderror
                                 <label for="body" class="form-label">Article</label>
                                 <textarea name="body" id="body">{!! old('body') !!}</textarea>
-                                {{-- <div id="quill-editor-full"></div>
-                                <input type="hidden" class="form-control" name="body" id="body" value="{{ old('body') }}"> --}}
                             </div>
                             <div class="col-lg-8">
                                 <div class="d-flex">

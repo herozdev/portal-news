@@ -37,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/uploadImage', [AdminController::class, 'uploadImage']);
         Route::delete('/deletePost/{post:slug}', [AdminController::class, 'deletePost']);
         Route::get('/editPost/{post:slug}', [AdminController::class, 'editPost']);
-        Route::get('/updatePost/{post:slug}', [AdminController::class, 'updatePost']);
+        Route::put('/updatePost/{post:slug}', [AdminController::class, 'updatePost']);
     });
 
     Route::prefix('/dashboard/categories')->group(function () {

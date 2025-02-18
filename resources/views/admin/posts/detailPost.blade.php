@@ -8,7 +8,7 @@
         <div class="row align-items-top">
             <div class="col-lg-10">
                 <div class="card">
-                    <img src="{{ asset('admin/img/card.jpg') }}" class="card-img-top" alt="..." height="380">
+                    <img src="{{ asset($post->image) }}" class="card-img-top" alt="..." height="380">
                     <div class="card-body">
                         <h5 class="card-title">{{ $post->title }}</h5>
                         <p class="card-text">{!! $post->body !!}</p>

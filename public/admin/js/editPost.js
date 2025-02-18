@@ -11,40 +11,74 @@
             .then(data => slug.value = data.slug)
     });
 
-    // Quill
-    const toolbarOptions = [
-        [{ header: [1, 2, 3, 4, 5, 6, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        ['image', 'code-block', 'blockquote'],
-        [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
-        [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-        [{ 'direction': 'rtl' }],                         // text direction
-        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-        [{ 'font': [] }],
-        [{ 'align': [] }],
-    ];
-
-    var quill = new Quill('#quill-editor-full', {
-        theme: 'snow',
-        modules: {
-            toolbar: toolbarOptions
+    $('#body').summernote({
+        placeholder: 'Hello',
+        tabsize: 2,
+        height: 350,
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['fullscreen', 'codeview', 'help']],
+        ],
+        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New'],
+        popover: {
+            image: [
+                ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+                ['float', ['floatLeft', 'floatRight', 'floatNone']],
+                ['remove', ['removeMedia']]
+            ],
+            link: [
+                ['link', ['linkDialogShow', 'unlink']]
+            ],
+            table: [
+                ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+                ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+            ],
+            air: [
+                ['color', ['color']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['para', ['ul', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture']]
+            ]
         },
+        callbacks: {
+            onImageUpload: function (files) {
+                uploadImage(files[0]);
+            },
+            onMediaDelete: function (target) {
+                deleteImage(target[0].src);
+            },
+            onSubmit: function () {
+                $('#content').val($('#body').summernote('code'));
+            }
+        }
     });
 
-    // Set the value of the hidden input field to the full content of the Quill editor
-    quill.on('text-change', function(delta, oldDelta, source) {
-        document.getElementById('body').value = quill.root.innerHTML;
-    });
-
-    // Get the initial content from the hidden input
-    var initialContent = document.querySelector("input[name='body']").value;
-
-    // Set the initial content to the Quill editor
-    quill.clipboard.dangerouslyPasteHTML(initialContent);
-
-    quill.on('text-change', function (delta, oldDelta, source) {
-        document.querySelector("input[name='body']").value = quill.root.innerHTML;
-    });
+    function uploadImage(file) {
+        let data = new FormData();
+        data.append('file', file);
+        $.ajax({
+            url: '/dashboard/posts/uploadImage',
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: data,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Tambahkan CSRF token
+            },
+            type: "post",
+            success: function (url) {
+                $('#body').summernote("insertImage", url);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
 })();
