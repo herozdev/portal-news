@@ -30,7 +30,7 @@
         @foreach ($pluginStyles as $style)
             <link rel="stylesheet" href="{{ $style }}">
         @endforeach
-        
+
     @endif
 
     <!-- Template Main CSS File -->
@@ -59,6 +59,9 @@
     @include('partials._sidebar_admin')
 
     <main id="main" class="main">
+        {{-- Sweet alert --}}
+        @include('sweetalert::alert')
+        <!-- End Sweet alert -->
 
         @yield('content')
 

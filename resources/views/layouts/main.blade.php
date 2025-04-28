@@ -50,24 +50,23 @@
                             </li>
 
                             @auth
-                            <li class="nav-item submenu dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
-                                    aria-haspopup="true" aria-expanded="false">Welcome, {{ auth()->user()->name }}</a>
-                                <ul class="dropdown-menu">
-                                    <li class="nav-item"><a href="/dashboard" class="nav-link">My Dashboard</a></li>
-                                    <li class="nav-item">
-                                        <form action="/logout" method="post">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item nav-link">Sign Out</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-
+                                <li class="nav-item submenu dropdown">
+                                    <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button"
+                                        aria-haspopup="true" aria-expanded="false">Welcome, {{ auth()->user()->name }}</a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-item"><a href="/dashboard" class="nav-link">My Dashboard</a></li>
+                                        <li class="nav-item">
+                                            <form action="/logout" method="post">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item nav-link">Sign Out</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
                             @else
-                            <li class="nav-item">
-                                <a href="/auth" class="nav-link">Sign In</a>
-                            </li>
+                                <li class="nav-item">
+                                    <a href="/auth" class="nav-link">Sign In</a>
+                                </li>
                             @endauth
 
                         </ul>

@@ -65,9 +65,7 @@
                                                 class="d-inline">
                                                 @method('delete')
                                                 @csrf
-                                                <button class="badge bg-danger border-0"
-                                                    onclick="return confirm('Are you sure want to delete?')"><i
-                                                        class="bi bi-x-circle"></i></button>
+                                                <a href="/dashboard/posts/deletePost/{{ $item->slug }}" class="badge bg-danger border-0" type="submit" data-confirm-delete="true"><i class="bi bi-x-circle"></i></a>
                                             </form>
                                         </td>
                                     </tr>

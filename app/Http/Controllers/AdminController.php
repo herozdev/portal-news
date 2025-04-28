@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class AdminController extends Controller
 {
@@ -78,6 +79,17 @@ class AdminController extends Controller
 
     public function indexPosts()
     {
+        confirmDelete(
+            'Are you sure you want to delete this post?',
+            'This action cannot be undone.',
+            'warning',
+            'Yes, delete it!',
+            'Cancel',
+            'error',
+            'success',
+            'Your post has been deleted !!'
+        );
+
         return view('admin.posts.posts', [
             'title' => "My Posts",
             'post' => Post::where('user_id', auth()->user()->id)->get(),
@@ -188,8 +200,17 @@ class AdminController extends Controller
         $data['excerpt'] = Str::limit(strip_tags($request->body), 100);
 
         Post::create($data);
+        // Alert::success('New post has been created !!');
 
-        return redirect('/dashboard/posts')->with('success', 'New post published !!');
+        Alert::success('Success!', 'New post has been created !!')
+        ->width('600px')             // Ubah lebar
+        ->padding('3em')             // Ubah padding
+        ->background('#fff url(/images/bg.png) center') // Background kustom
+        ->buttonsStyling(false)      // Nonaktifkan styling bawaan
+        ->iconHtml('<i class="fas fa-check-circle fa-3x"></i>'); // Icon kustom
+
+        // return redirect('/dashboard/posts')->with('success', 'New post published !!');
+        return redirect('/dashboard/posts');
     }
 
     private function resizeImage($sourcePath, $destinationPath, $newWidth)
@@ -230,11 +251,31 @@ class AdminController extends Controller
         return redirect('/dashboard/categories')->with('success', 'New category created !!');
     }
 
+    /**
+     * Delete a post
+     *
+     * @param  Post $post
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function deletePost(Post $post)
     {
+        // Hapus gambar jika ada
+        if ($post->image && file_exists(public_path($post->image))) {
+            unlink(public_path($post->image));
+        }
+
+        // Hapus post dari database
         Post::destroy($post->id);
 
-        return redirect('/dashboard/posts')->with('success', 'Your post has been deleted !!');
+        // Tampilkan pesan konfirmasi
+        Alert::success('Success!', 'Your post has been deleted !!')
+            ->width('600px')             // Ubah lebar
+            ->padding('3em')             // Ubah padding
+            ->background('#fff url(/images/bg.png) center') // Background kustom
+            ->buttonsStyling(false)      // Nonaktifkan styling bawaan
+            ->iconHtml('<i class="fas fa-check-circle fa-3x"></i>'); // Icon kustom
+
+        return redirect('/dashboard/posts');
     }
 
     public function editPost(Post $post)
