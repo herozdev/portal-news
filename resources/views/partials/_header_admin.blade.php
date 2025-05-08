@@ -213,9 +213,12 @@
                     </li>
 
                     <li>
-                        <form action="/logout" method="post">
+                        <form action="/logout" method="post" id="logout-form">
                             @csrf
-                            <button type="submit" class="dropdown-item d-flex align-items-center"><i class="bi bi-box-arrow-right"></i> Sign Out</button>
+                            <button type="submit" class="dropdown-item d-flex align-items-center"
+                                onclick="confirmLogout(event)">
+                                <i class="bi bi-box-arrow-right"></i> Sign Out
+                            </button>
                         </form>
                         {{-- <a class="dropdown-item d-flex align-items-center" href="#">
                             <i class="bi bi-box-arrow-right"></i>

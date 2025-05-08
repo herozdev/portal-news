@@ -73,7 +73,8 @@ class AdminController extends Controller
     public function dashboard()
     {
         return view('admin.dashboard', [
-            'title' => "Dashboard"
+            'title' => "Dashboard",
+            'afterScripts' => ['admin/js/confirmLogout.js']
         ]);
     }
 
@@ -203,11 +204,11 @@ class AdminController extends Controller
         // Alert::success('New post has been created !!');
 
         Alert::success('Success!', 'New post has been created !!')
-        ->width('600px')             // Ubah lebar
-        ->padding('3em')             // Ubah padding
-        ->background('#fff url(/images/bg.png) center') // Background kustom
-        ->buttonsStyling(false)      // Nonaktifkan styling bawaan
-        ->iconHtml('<i class="fas fa-check-circle fa-3x"></i>'); // Icon kustom
+            ->width('600px')             // Ubah lebar
+            ->padding('3em')             // Ubah padding
+            ->background('#fff url(/images/bg.png) center') // Background kustom
+            ->buttonsStyling(false)      // Nonaktifkan styling bawaan
+            ->iconHtml('<i class="fas fa-check-circle fa-3x"></i>'); // Icon kustom
 
         // return redirect('/dashboard/posts')->with('success', 'New post published !!');
         return redirect('/dashboard/posts');
